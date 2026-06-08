@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Data Login — Dashboard</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/3.30.0/iconfont/tabler-icons.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg:#0C0D11;
+  --surface:#13141A;
+  --surface2:#1A1C24;
+  --surface3:#22242F;
+  --border:#2A2D3A;
+  --border2:#343848;
+  --text: #ffffff; /* Ubah ke warna putih */
+  --text2: #e2e8f0;     /* Teks sekunder putih redup */
+  --text3: #cbd5e1;     /* Teks tersier */
+  --accent:#6C63FF;
+  --accent2:#4ECDC4;
+  --accent3:#FF6B6B;
+  --gold:#F7B731;
+  --green:#26de81;
+  --font-display:'Syne',sans-serif;
+  --font-body:'DM Sans',sans-serif;
+  --font-mono:'DM Mono',monospace;
+  --r:10px;
+  --r2:16px;
+  --sidebar:240px;
+}
+
+html,body{height:100%;background-image: url('https://i.pinimg.com/736x/d9/27/53/d92753cf49a1a9f4745cafab90316347.jpg');var(--font-body)}
+
+/* ── LAYOUT ── */
+.shell{display:flex;height:100vh;overflow:hidden}
+
+/* ── SIDEBAR ── */
+sidebar {
+    background: rgba(19, 20, 26, 0.6); /* 0.6 adalah tingkat transparansi */
+    backdrop-filter: blur(10px);        /* Efek blur kaca */
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+}
+.sb-logo{
+  padding:20px 20px 16px;
+  border-bottom:1px solid var(--border);
+  margin-bottom:8px;
+}
+.sb-logo .wordmark{font-family:var(--font-display);font-size:15px;font-weight:800;letter-spacing:3px;color:var(--text);display:flex;align-items:center;gap:9px}
+.sb-logo .dot{width:8px;height:8px;border-radius:2px;background:var(--accent);display:inline-block}
+.sb-logo .sub{font-size:10px;color:var(--text3);margin-top:2px;font-weight:400;letter-spacing:1px}
+
+.sb-sec{padding:6px 12px;margin-top:4px}
+.sb-sec-label{font-size:9px;letter-spacing:2px;color:var(--text3);font-weight:600;text-transform:uppercase;padding:0 8px;margin-bottom:4px}
+.sb-item{
+  display:flex;align-items:center;gap:10px;
+  padding:8px 10px;border-radius:var(--r);
+  cursor:pointer;font-size:13px;color:var(--text2);
+  transition:all .15s;margin-bottom:2px;
+  user-select:none;
+}
+.sb-item:hover{background:var(--surface2);color:var(--text)}
+.sb-item.active{background:var(--accent);color:#fff}
+.sb-item .ico{width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.sb-item .count{margin-left:auto;font-size:10px;font-family:var(--font-mono);background:var(--surface3);padding:1px 6px;border-radius:99px;color:var(--text3)}
+.sb-item.active .count{background:rgba(255,255,255,.18);color:#fff}
+.sb-divider{height:1px;background:var(--border);margin:8px 12px}
+.sb-bottom{margin-top:auto;padding:0 12px}
+
+/* ── MAIN ── */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+
+/* topbar */
+.topbar{
+  display:flex;align-items:center;gap:10px;
+  padding:14px 24px;
+  border-bottom:1px solid var(--border);
+ background: rgba(19, 20, 26, 0.6);
+  backdrop-filter: blur(10px);
+}
+.topbar-title{font-family:var(--font-display);font-size:16px;font-weight:700;flex:1;color:var(--text)}
+.search-wrap{position:relative;flex:1;max-width:300px}
+.search-wrap i{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:15px;pointer-events:none}
+.search-wrap input{
+  width:100%;height:34px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);
+  padding:0 10px 0 32px;font-size:13px;color:var(--text);font-family:var(--font-body);
+}
+.search-wrap input::placeholder{color:var(--text3)}
+.search-wrap input:focus{outline:none;border-color:var(--accent)}
+.tb-btn{
+  height:34px;padding:0 14px;border-radius:var(--r);border:1px solid var(--border);
+  background:transparent;color:var(--text2);font-size:12px;cursor:pointer;display:flex;
+  align-items:center;gap:6px;font-family:var(--font-body);transition:all .15s;white-space:nowrap;
+}
+.tb-btn:hover{background:var(--surface2);color:var(--text);border-color:var(--border2)}
+.tb-btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.tb-btn.primary:hover{opacity:.88}
+
+/* ── CONTENT ── */
+.content{flex:1;overflow-y:auto;padding:24px}
+
+/* stats row */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
+.stat-card, .sec-card {
+  background: rgba(19, 20, 26, 0.3) !important; /* Gunakan !important untuk mengoverride style lama */
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.stat-card::after{
+  content:'';position:absolute;top:0;right:0;width:60px;height:60px;
+  border-radius:0 var(--r2) 0 100%;opacity:.12;
+}
+.stat-card.c1::after{background:var(--accent)}
+.stat-card.c2::after{background:var(--accent2)}
+.stat-card.c3::after{background:var(--gold)}
+.stat-card.c4::after{background:var(--green)}
+.stat-label{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin-bottom:8px}
+.stat-val{font-family:var(--font-display);font-size:28px;font-weight:800;line-height:1}
+.stat-card.c1 .stat-val{color:var(--accent)}
+.stat-card.c2 .stat-val{color:var(--accent2)}
+.stat-card.c3 .stat-val{color:var(--gold)}
+.stat-card.c4 .stat-val{color:var(--green)}
+.stat-sub{font-size:11px;color:var(--text3);margin-top:4px}
+
+/* section view (all sections grid) */
+.sec-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px}
+
+/* section card */
+.sec-card{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden;
+  display:flex;flex-direction:column;
+  animation:fadeUp .25s ease both;
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.sec-card-head{
+  display:flex;align-items:center;gap:12px;padding:14px 16px;
+  border-bottom:1px solid var(--border);
+}
+.sec-card-icon{
+  width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;
+}
+.sec-card-name{font-family:var(--font-display);font-size:13px;font-weight:700;flex:1;color:var(--text)}
+.sec-card-badge{font-size:10px;font-family:var(--font-mono);background:var(--surface3);padding:2px 8px;border-radius:99px;color: #ffffff !important; /* Memaksa nama section menjadi putih */
+}
+.sec-card-acts{display:flex;gap:3px}
+.ib2{width:26px;height:26px;display:flex;align-items:center;justify-content:center;background:transparent;border:none;cursor:pointer;color:var(--text3);border-radius:7px;font-size:13px;transition:all .12s}
+.ib2:hover{background:var(--surface3);color:var(--text)}
+.ib2.red:hover{color:var(--accent3)}
+
+.sec-card-body{padding:8px 10px;flex:1}
+.row-item{
+  display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:8px;
+  margin-bottom:3px;transition:background .12s;
+}
+.row-item:hover{background:var(--surface2)}
+.row-lbl{font-size:11px;color:var(--text3);width:110px;flex-shrink:0;font-weight:500}
+.row-val{font-family:var(--font-mono);font-size:12px;color:var(--text);flex:1;word-break:break-all}
+.row-val.blur{filter:blur(5px);cursor:pointer;user-select:none}
+.row-val.lnk{color:var(--accent2);font-family:var(--font-body);font-size:12px;word-break:break-all}
+.row-val.lnk:hover{text-decoration:underline}
+.row-acts{display:flex;gap:2px;flex-shrink:0}
+.empty-card{padding:20px;text-align:center;font-size:12px;color:var(--text3)}
+.empty-card i{font-size:24px;display:block;margin-bottom:6px;opacity:.4}
+
+.sec-card-foot{
+  padding:8px 14px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;
+}
+.add-row-btn{
+  font-size:11px;color:var(--accent);cursor:pointer;display:flex;align-items:center;gap:4px;
+  background:none;border:none;font-family:var(--font-body);transition:opacity .12s;
+}
+.add-row-btn:hover{opacity:.75}
+
+/* ── SINGLE SECTION VIEW ── */
+.detail-view{display:none;flex-direction:column;gap:0}
+.detail-back{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text2);cursor:pointer;margin-bottom:20px}
+.detail-back:hover{color:var(--text)}
+.detail-head{display:flex;align-items:center;gap:14px;margin-bottom:20px}
+.detail-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.detail-title{font-family:var(--font-display);font-size:22px;font-weight:800;color:var(--text)}
+.detail-sub{font-size:12px;color:var(--text3)}
+.detail-table{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden}
+.dt-header{display:grid;grid-template-columns:1fr 2fr 110px;padding:10px 18px;background:var(--surface2);border-bottom:1px solid var(--border);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3)}
+.dt-row{display:grid;grid-template-columns:1fr 2fr 110px;padding:12px 18px;border-bottom:1px solid var(--border);align-items:center}
+.dt-row:last-child{border-bottom:none}
+.dt-row:hover{background:var(--surface2)}
+.dt-label{font-size:12px;color:var(--text2);font-weight:500}
+.dt-val{font-family:var(--font-mono);font-size:13px;color:var(--text);word-break:break-all}
+.dt-val.blur{filter:blur(5px);cursor:pointer;user-select:none}
+.dt-val.lnk{color:var(--accent2);font-family:var(--font-body);text-decoration:none;font-size:12px}
+.dt-acts{display:flex;gap:3px;justify-content:flex-end}
+
+/* ── MODAL ── */
+.overlay{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);
+  z-index:100;align-items:center;justify-content:center;
+}
+.overlay.on{display:flex}
+.modal{
+  background:var(--surface);border:1px solid var(--border2);border-radius:var(--r2);
+  padding:24px;width:100%;max-width:400px;box-shadow:0 24px 64px rgba(0,0,0,.5);
+}
+.modal-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.modal-hd span{font-family:var(--font-display);font-size:16px;font-weight:700;color:var(--text)}
+.fr{margin-bottom:12px}
+.fr label{display:block;font-size:11px;color:var(--text3);margin-bottom:5px;letter-spacing:.5px}
+.fr input,.fr select{
+  width:100%;height:36px;background:var(--surface2);border:1px solid var(--border2);border-radius:var(--r);
+  padding:0 12px;font-size:13px;color:var(--text);font-family:var(--font-body);
+}
+.fr select{appearance:none;cursor:pointer}
+.fr input:focus,.fr select:focus{outline:none;border-color:var(--accent)}
+.mfoot{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}
+
+/* toast */
+.toast{
+  display:none;position:fixed;bottom:24px;right:24px;
+  background:var(--surface2);border:1px solid var(--border2);
+  color:var(--green);padding:10px 18px;border-radius:var(--r);
+  font-size:13px;z-index:200;box-shadow:0 8px 32px rgba(0,0,0,.4);
+  animation:slideUp .2s ease;
+}
+@keyframes slideUp{from{transform:translateY(10px);opacity:0}to{transform:translateY(0);opacity:1}}
+
+/* scrollbar */
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:99px}
+</style>
+</head>
+<body>
+
+<div class="shell">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sb-logo">
+      <div class="wordmark"><span class="dot"></span>DATALG</div>
+      <div class="sub">Credential Manager</div>
+    </div>
+
+    <div class="sb-sec">
+      <div class="sb-sec-label">Navigasi</div>
+      <div class="sb-item active" onclick="showDashboard()">
+        <span class="ico"><i class="ti ti-layout-dashboard"></i></span>
+        Dashboard
+      </div>
+    </div>
+
+    <div class="sb-divider"></div>
+
+    <div class="sb-sec">
+      <div class="sb-sec-label">Sections</div>
+      <div id="sb-sections"></div>
+    </div>
+
+    <div class="sb-divider"></div>
+    <div class="sb-bottom">
+      <div class="sb-item" onclick="exportData()">
+        <span class="ico"><i class="ti ti-download"></i></span>
+        Export
+      </div>
+      <div class="sb-item" onclick="openAddSection()">
+        <span class="ico"><i class="ti ti-plus"></i></span>
+        Tambah Section
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <div class="topbar-title" id="topbar-title">Dashboard</div>
+      <div class="search-wrap">
+        <i class="ti ti-search"></i>
+        <input type="text" id="search" placeholder="Cari kredensial..." oninput="render()">
+      </div>
+      <button class="tb-btn" id="eye-btn" onclick="toggleAll()"><i class="ti ti-eye"></i> Tampilkan</button>
+      <button class="tb-btn primary" onclick="openAddSection()"><i class="ti ti-plus"></i> Section</button>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content" id="content">
+      <!-- dashboard view -->
+      <div id="dashboard-view">
+        <div class="stats-row" id="stats-row"></div>
+        <div class="sec-grid" id="sec-grid"></div>
+      </div>
+      <!-- single section view -->
+      <div id="detail-view" class="detail-view"></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <div class="modal-hd">
+      <span id="modal-title">Modal</span>
+      <button class="ib2" onclick="closeModal()" aria-label="Tutup"><i class="ti ti-x"></i></button>
+    </div>
+    <div id="modal-body"></div>
+    <div class="mfoot">
+      <button class="tb-btn" onclick="closeModal()">Batal</button>
+      <button class="tb-btn primary" id="modal-save">Simpan</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── DATA ──
+let sections = [];
+try{ sections = JSON.parse(localStorage.getItem('dlm3')||'[]'); }catch(e){}
+if(!sections.length){
+  sections = [
+    {id:'s1',name:'Admin AGWL',icon:'ti-shield-lock',color:'#1A2A3E',textColor:'#6CA8E0',rows:[]},
+    {id:'s2',name:'Admin Power',icon:'ti-bolt',color:'#201E35',textColor:'#9B8FFF',rows:[]},
+    {id:'s3',name:'Admin BK',icon:'ti-building',color:'#152A24',textColor:'#4ECDC4',rows:[]},
+    {id:'s4',name:'VPN',icon:'ti-network',color:'#2A2010',textColor:'#F7B731',rows:[]},
+    {id:'s5',name:'WiFi',icon:'ti-wifi',color:'#172515',textColor:'#26de81',rows:[]},
+    {id:'s6',name:'PIN ATM',icon:'ti-building-bank',color:'#2A1515',textColor:'#FF6B6B',rows:[]},
+    {id:'s7',name:'Email & Akun',icon:'ti-mail',color:'#25132A',textColor:'#FF6BC5',rows:[]},
+    {id:'s8',name:'Lainnya',icon:'ti-dots',color:'#1E1E1E',textColor:'#9498AE',rows:[]},
+  ];
+}
+
+let showAll = false;
+let currentView = 'dashboard'; // 'dashboard' | secId
+
+function save(){ try{localStorage.setItem('dlm3',JSON.stringify(sections));}catch(e){} }
+
+// ── STATS ──
+function renderStats(){
+  const total = sections.reduce((a,s)=>a+s.rows.length,0);
+  const passes = sections.reduce((a,s)=>a+s.rows.filter(r=>r.type==='password').length,0);
+  const links = sections.reduce((a,s)=>a+s.rows.filter(r=>r.type==='link').length,0);
+  document.getElementById('stats-row').innerHTML = `
+    <div class="stat-card c1">
+      <div class="stat-label">Total Sections</div>
+      <div class="stat-val">${sections.length}</div>
+      <div class="stat-sub">kategori aktif</div>
+    </div>
+    <div class="stat-card c2">
+      <div class="stat-label">Total Entri</div>
+      <div class="stat-val">${total}</div>
+      <div class="stat-sub">kredensial tersimpan</div>
+    </div>
+    <div class="stat-card c3">
+      <div class="stat-label">Password</div>
+      <div class="stat-val">${passes}</div>
+      <div class="stat-sub">disembunyikan</div>
+    </div>
+    <div class="stat-card c4">
+      <div class="stat-label">Links</div>
+      <div class="stat-val">${links}</div>
+      <div class="stat-sub">URL tersimpan</div>
+    </div>
+  `;
+}
+
+// ── SIDEBAR ──
+function renderSidebar(){
+  document.getElementById('sb-sections').innerHTML = sections.map(sec=>`
+    <div class="sb-item ${currentView===sec.id?'active':''}" onclick="showDetail('${sec.id}')">
+      <span class="ico"><i class="ti ${sec.icon}"></i></span>
+      ${sec.name}
+      <span class="count">${sec.rows.length}</span>
+    </div>
+  `).join('');
+}
+
+// ── RENDER ──
+function render(){
+  const q = (document.getElementById('search').value||'').toLowerCase();
+  renderStats();
+  renderSidebar();
+  if(currentView === 'dashboard') renderDashboard(q);
+  else renderDetailView(currentView, q);
+}
+
+function showDashboard(){
+  currentView = 'dashboard';
+  document.getElementById('dashboard-view').style.display='';
+  document.getElementById('detail-view').style.display='none';
+  document.getElementById('topbar-title').textContent = 'Dashboard';
+  render();
+}
+
+function showDetail(secId){
+  currentView = secId;
+  document.getElementById('dashboard-view').style.display='none';
+  document.getElementById('detail-view').style.display='flex';
+  const sec = sections.find(s=>s.id===secId);
+  document.getElementById('topbar-title').textContent = sec ? sec.name : 'Section';
+  render();
+}
+
+// ── DASHBOARD GRID ──
+function renderDashboard(q){
+  document.getElementById('sec-grid').innerHTML = sections.map(sec=>{
+    const rows = sec.rows.filter(r=>!q||(r.label||'').toLowerCase().includes(q)||(r.val||'').toLowerCase().includes(q));
+    const shown = rows.slice(0,4);
+    return `
+    <div class="sec-card" style="animation-delay:${Math.random()*0.1}s">
+      <div class="sec-card-head">
+        <div class="sec-card-icon" style="background:${sec.color};color:${sec.textColor}">
+          <i class="ti ${sec.icon}"></i>
+        </div>
+        <span class="sec-card-name">${sec.name}</span>
+        <span class="sec-card-badge">${sec.rows.length}</span>
+        <div class="sec-card-acts">
+          <button class="ib2" onclick="editSection('${sec.id}')" title="Edit"><i class="ti ti-settings" style="font-size:12px"></i></button>
+          <button class="ib2 red" onclick="delSection('${sec.id}')" title="Hapus"><i class="ti ti-trash" style="font-size:12px"></i></button>
+        </div>
+      </div>
+      <div class="sec-card-body">
+        ${rows.length===0
+          ? `<div class="empty-card"><i class="ti ti-inbox"></i>Belum ada data</div>`
+          : shown.map(row=>rowCardHTML(sec.id,row)).join('')
+        }
+        ${rows.length>4?`<div style="font-size:11px;color:var(--text3);padding:6px 8px">+${rows.length-4} lainnya — <span style="color:var(--accent);cursor:pointer" onclick="showDetail('${sec.id}')">lihat semua</span></div>`:''}
+      </div>
+      <div class="sec-card-foot">
+        <button class="add-row-btn" onclick="openAddRow('${sec.id}')"><i class="ti ti-plus" style="font-size:12px"></i> Tambah baris</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function rowCardHTML(secId, row){
+  const isPass = row.type==='password';
+  const isLink = row.type==='link';
+  const shown = showAll || row.shown;
+  const valCls = isPass&&!shown?'row-val blur':(isLink?'row-val lnk':'row-val');
+  const valEl = isLink
+    ? `<a class="${valCls}" href="${row.val}" target="_blank">${row.val}</a>`
+    : `<span class="${valCls}" ${isPass?`onclick="toggleRow('${secId}','${row.id}')"`:''}>${row.val}</span>`;
+  return `
+  <div class="row-item">
+    <span class="row-lbl">${row.label}</span>
+    ${valEl}
+    <div class="row-acts">
+      ${isPass?`<button class="ib2" onclick="toggleRow('${secId}','${row.id}')"><i class="ti ti-eye" style="font-size:12px"></i></button>`:''}
+      <button class="ib2" onclick="cp('${row.val.replace(/'/g,"\\'").replace(/"/g,'&quot;')}','${row.label}')"><i class="ti ti-copy" style="font-size:12px"></i></button>
+      <button class="ib2 red" onclick="delRow('${secId}','${row.id}')"><i class="ti ti-trash" style="font-size:12px"></i></button>
+    </div>
+  </div>`;
+}
+
+// ── DETAIL VIEW ──
+function renderDetailView(secId, q){
+  const sec = sections.find(s=>s.id===secId);
+  if(!sec){ showDashboard(); return; }
+  const rows = sec.rows.filter(r=>!q||(r.label||'').toLowerCase().includes(q)||(r.val||'').toLowerCase().includes(q));
+  const dv = document.getElementById('detail-view');
+  dv.innerHTML = `
+    <div class="detail-back" onclick="showDashboard()"><i class="ti ti-arrow-left"></i> Kembali ke Dashboard</div>
+    <div class="detail-head">
+      <div class="detail-icon" style="background:${sec.color};color:${sec.textColor}">
+        <i class="ti ${sec.icon}"></i>
+      </div>
+      <div>
+        <div class="detail-title">${sec.name}</div>
+        <div class="detail-sub">${sec.rows.length} kredensial tersimpan</div>
+      </div>
+      <div style="margin-left:auto;display:flex;gap:8px">
+        <button class="tb-btn" onclick="editSection('${sec.id}')"><i class="ti ti-settings"></i> Edit Section</button>
+        <button class="tb-btn primary" onclick="openAddRow('${sec.id}')"><i class="ti ti-plus"></i> Tambah Baris</button>
+      </div>
+    </div>
+    <div class="detail-table">
+      <div class="dt-header">
+        <div>Label</div><div>Nilai</div><div style="text-align:right">Aksi</div>
+      </div>
+      ${rows.length===0
+        ? `<div style="padding:32px;text-align:center;font-size:13px;color:var(--text3)"><i class="ti ti-inbox" style="font-size:28px;display:block;margin-bottom:8px;opacity:.4"></i>Belum ada data</div>`
+        : rows.map(row=>dtRowHTML(sec.id,row)).join('')
+      }
+    </div>
+  `;
+}
+
+function dtRowHTML(secId, row){
+  const isPass = row.type==='password';
+  const isLink = row.type==='link';
+  const shown = showAll || row.shown;
+  const valCls = isPass&&!shown?'dt-val blur':(isLink?'dt-val lnk':'dt-val');
+  const valEl = isLink
+    ? `<a class="${valCls}" href="${row.val}" target="_blank">${row.val}</a>`
+    : `<span class="${valCls}" ${isPass?`onclick="toggleRow('${secId}','${row.id}')"`:''}>${row.val}</span>`;
+  return `
+  <div class="dt-row">
+    <div class="dt-label">${row.label}</div>
+    <div>${valEl}</div>
+    <div class="dt-acts">
+      ${isPass?`<button class="ib2" onclick="toggleRow('${secId}','${row.id}')"><i class="ti ti-eye"></i></button>`:''}
+      <button class="ib2" onclick="cp('${row.val.replace(/'/g,"\\'").replace(/"/g,'&quot;')}','${row.label}')"><i class="ti ti-copy"></i></button>
+      <button class="ib2" onclick="openEditRow('${secId}','${row.id}')"><i class="ti ti-edit"></i></button>
+      <button class="ib2 red" onclick="delRow('${secId}','${row.id}')"><i class="ti ti-trash"></i></button>
+    </div>
+  </div>`;
+}
+
+// ── TOGGLE ──
+function toggleRow(secId,rowId){
+  const sec=sections.find(s=>s.id===secId);
+  const row=sec&&sec.rows.find(r=>r.id===rowId);
+  if(row){row.shown=!row.shown;render();}
+}
+function toggleAll(){
+  showAll=!showAll;
+  const btn=document.getElementById('eye-btn');
+  btn.innerHTML=`<i class="ti ti-eye${showAll?'-off':''}"></i> ${showAll?'Sembunyikan':'Tampilkan'}`;
+  render();
+}
+
+// ── COPY ──
+function cp(txt,lbl){
+  navigator.clipboard.writeText(txt).catch(()=>{});
+  const t=document.getElementById('toast');
+  t.textContent=`✓ ${lbl} disalin`;
+  t.style.display='block';
+  clearTimeout(window._tt);
+  window._tt=setTimeout(()=>t.style.display='none',1800);
+}
+
+// ── MODAL ──
+function openModal(title,body,onSave){
+  document.getElementById('modal-title').textContent=title;
+  document.getElementById('modal-body').innerHTML=body;
+  document.getElementById('modal-save').onclick=onSave;
+  document.getElementById('overlay').classList.add('on');
+}
+function closeModal(){
+  document.getElementById('overlay').classList.remove('on');
+}
+document.getElementById('overlay').addEventListener('click',e=>{
+  if(e.target===document.getElementById('overlay')) closeModal();
+});
+
+// ── CRUD ROWS ──
+function openAddRow(secId){
+  openModal('Tambah Baris',`
+    <div class="fr"><label>Label / Nama Field</label><input type="text" id="rl" placeholder="cth: Username, Password, PIN…"></div>
+    <div class="fr"><label>Nilai</label><input type="text" id="rv" placeholder="isi nilai…"></div>
+    <div class="fr"><label>Tipe</label>
+      <select id="rt"><option value="text">Teks biasa</option><option value="password">Password (tersembunyi)</option><option value="link">Link / URL</option></select>
+    </div>
+  `,()=>{
+    const l=document.getElementById('rl').value.trim();
+    const v=document.getElementById('rv').value.trim();
+    const t=document.getElementById('rt').value;
+    if(!l||!v) return;
+    const sec=sections.find(s=>s.id===secId);
+    sec.rows.push({id:Date.now().toString(),label:l,val:v,type:t,shown:false});
+    save();closeModal();render();
+  });
+}
+
+function openEditRow(secId,rowId){
+  const sec=sections.find(s=>s.id===secId);
+  const row=sec.rows.find(r=>r.id===rowId);
+  openModal('Edit Baris',`
+    <div class="fr"><label>Label</label><input type="text" id="rl" value="${row.label}"></div>
+    <div class="fr"><label>Nilai</label><input type="text" id="rv" value="${row.val}"></div>
+    <div class="fr"><label>Tipe</label>
+      <select id="rt">
+        <option value="text" ${row.type==='text'?'selected':''}>Teks biasa</option>
+        <option value="password" ${row.type==='password'?'selected':''}>Password</option>
+        <option value="link" ${row.type==='link'?'selected':''}>Link / URL</option>
+      </select>
+    </div>
+  `,()=>{
+    row.label=document.getElementById('rl').value.trim();
+    row.val=document.getElementById('rv').value.trim();
+    row.type=document.getElementById('rt').value;
+    if(!row.label||!row.val) return;
+    save();closeModal();render();
+  });
+}
+
+function delRow(secId,rowId){
+  if(!confirm('Hapus baris ini?')) return;
+  const sec=sections.find(s=>s.id===secId);
+  sec.rows=sec.rows.filter(r=>r.id!==rowId);
+  save();render();
+}
+
+// ── CRUD SECTIONS ──
+function openAddSection(){
+  openModal('Tambah Section',`
+    <div class="fr"><label>Nama Section</label><input type="text" id="sn" placeholder="cth: Server, Database…"></div>
+    <div class="fr"><label>Icon (Tabler name)</label><input type="text" id="si" placeholder="cth: ti-server"></div>
+  `,()=>{
+    const name=document.getElementById('sn').value.trim();
+    const icon=document.getElementById('si').value.trim()||'ti-key';
+    if(!name) return;
+    sections.push({id:'s'+Date.now(),name,icon,color:'#1E1E1E',textColor:'#9498AE',rows:[]});
+    save();closeModal();render();
+  });
+}
+
+function editSection(secId){
+  const sec=sections.find(s=>s.id===secId);
+  openModal('Edit Section',`
+    <div class="fr"><label>Nama Section</label><input type="text" id="sn" value="${sec.name}"></div>
+    <div class="fr"><label>Icon (Tabler name)</label><input type="text" id="si" value="${sec.icon}"></div>
+  `,()=>{
+    sec.name=document.getElementById('sn').value.trim()||sec.name;
+    sec.icon=document.getElementById('si').value.trim()||sec.icon;
+    save();closeModal();render();
+  });
+}
+
+function delSection(secId){
+  if(!confirm('Hapus section ini beserta semua datanya?')) return;
+  sections=sections.filter(s=>s.id!==secId);
+  if(currentView===secId) showDashboard();
+  else { save();render(); }
+}
+
+// ── EXPORT ──
+function exportData(){
+  const txt=sections.map(sec=>{
+    const rows=sec.rows.map(r=>`  ${r.label}: ${r.val}`).join('\n');
+    return `[ ${sec.name} ]\n${rows||'  (kosong)'}`;
+  }).join('\n\n');
+  const a=document.createElement('a');
+  a.href='data:text/plain;charset=utf-8,'+encodeURIComponent(txt);
+  a.download='data-login.txt';a.click();
+}
+
+render();
+</script>
+</body>
+</html>
